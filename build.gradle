@@ -1,0 +1,99 @@
+//QueryDSL
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.12'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+
+    //QueryDSL
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+}
+
+group = 'com.numble'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    // DB
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Redis
+    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Security
+    // implementation 'org.springframework.boot:spring-boot-starter-security'
+    // testImplementation 'org.springframework.security:spring-security-test'
+
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Kafka
+    // implementation 'org.springframework.kafka:spring-kafka'
+    // testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    //Swagger
+    // implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+
+    //QueryDSL
+    // implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    // implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // Easy Random
+    // testImplementation 'org.jeasy:easy-random-core:5.0.0'
+
+    // ETC
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+//QueryDSL
+def querydslDir = "$buildDir/generated/querydsl"
+
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
